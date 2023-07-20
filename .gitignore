@@ -1,0 +1,7 @@
+
+out/build/
+out/install/
+.vs/*
+
+!.vs/ProjectSettings.json
+!.vs/tasks.vs.json
