@@ -9,7 +9,6 @@ add_library (
 	${PROJECT_NAME} SHARED
 	${src}
 	${include}
-	"share/CMakeLibraryProject.h"
 )
 add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
@@ -78,12 +77,16 @@ target_link_options (
 	>
 )
 
-message (STATUS path=${CMAKE_INSTALL_PREFIX})
-
 target_include_directories (
 	${PROJECT_NAME}
 	PRIVATE
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_include_directories (
+	${PROJECT_NAME}
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/share>
 	$<INSTALL_INTERFACE:include>
 )
 
@@ -91,6 +94,7 @@ install (
 	TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}-config
 	ARCHIVE DESTINATION lib
+	PUBLIC_HEADER DESTINATION include
 )
 
 install (
