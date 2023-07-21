@@ -1,6 +1,5 @@
 
-out/build/
-out/install/
+/build/
 .vs/*
 
 !.vs/ProjectSettings.json

@@ -1,34 +1,43 @@
-﻿# CMakeList.txt : CMakeLibraryProject の CMake プロジェクト。ソースを含めて、次を定義します:
-# プロジェクト専用ロジックはこちらです。
-#
-cmake_minimum_required (VERSION 3.12)
+﻿cmake_minimum_required (VERSION 3.12)
 
-project ("CMakeLibraryProject")
+project (CMakeLibraryProject VERSION 0.1.0 LANGUAGES CXX)
+
+file (GLOB src src/*.cpp src/*.c)
+file (GLOB include include/*.hpp include/*.h)
 
 add_library (
 	${PROJECT_NAME} SHARED
-	"src/CMakeLibraryProject.cpp"
+	${src}
+	${include}
 	"share/CMakeLibraryProject.h"
-	"src/dllmain.cpp"
-	"include/framework.h"
- "include/_CMakeLibraryProject.h")
-
-set_property (
-	TARGET ${PROJECT_NAME}
-	PROPERTY CXX_STANDARD 20
 )
+add_library (${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-target_compile_definitions (${PROJECT_NAME} PUBLIC CMAKELIBRARYPROJECT_EXPORT)
+target_compile_features (${PROJECT_NAME} PRIVATE cxx_std_20)
+target_compile_definitions (${PROJECT_NAME} PRIVATE CMAKELIBRARYPROJECT_EXPORT)
+
+message (STATUS path=${CMAKE_INSTALL_PREFIX})
 
 target_include_directories (
 	${PROJECT_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+	PRIVATE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
 )
 
 install (
 	TARGETS ${PROJECT_NAME}
-	CONFIGURATIONS Release
-	RUNTIME DESTINATION bin
+	EXPORT ${PROJECT_NAME}-config
 	ARCHIVE DESTINATION lib
+)
+
+install (
+	EXPORT ${PROJECT_NAME}-config
+	NAMESPACE ${PROJECT_NAME}::
+	DESTINATION cmake
+)
+
+install (
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/share/
+	DESTINATION include
 )
